@@ -5,6 +5,7 @@ import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit'
 import {handleAsyncServerAppError, handleAsyncServerNetworkError,} from '../../utils/error-utils'
 import {TodolistType} from '../../api/types'
 import {ThunkError} from '../../utils/types'
+import {AxiosError} from "axios";
 
 const {setAppStatus} = appActions
 
@@ -14,11 +15,14 @@ const fetchTodolistsTC = createAsyncThunk<{ todolists: TodolistType[] }, undefin
         const res = await todolistsAPI.getTodolists()
         thunkAPI.dispatch(setAppStatus({status: 'succeeded'}))
         return {todolists: res.data}
-    } catch (error) {
+    } catch (error:any) {
         return handleAsyncServerNetworkError(error, thunkAPI)
     }
 })
-const removeTodolistTC = createAsyncThunk<{ id: string }, string, ThunkError>('todolists/removeTodolist', async (todolistId, {dispatch, rejectWithValue}) => {
+const removeTodolistTC = createAsyncThunk<{ id: string }, string, ThunkError>('todolists/removeTodolist', async (todolistId, {
+    dispatch,
+    rejectWithValue
+}) => {
     //изменим глобальный статус приложения, чтобы вверху полоса побежала
     dispatch(setAppStatus({status: 'loading'}))
     //изменим статус конкретного тудулиста, чтобы он мог задизеблить что надо
@@ -39,8 +43,9 @@ const addTodolistTC = createAsyncThunk<{ todolist: TodolistType }, string, Thunk
         } else {
             return handleAsyncServerAppError(res.data, thunkAPI, false)
         }
-    } catch (error) {
-        return handleAsyncServerNetworkError(error, thunkAPI, false)
+    } catch (error: any) {
+        const err: AxiosError = error
+        return handleAsyncServerNetworkError(err, thunkAPI, false)
     }
 })
 const changeTodolistTitleTC = createAsyncThunk('todolists/changeTodolistTitle', async (param: { id: string, title: string }, thunkAPI) => {
@@ -52,8 +57,9 @@ const changeTodolistTitleTC = createAsyncThunk('todolists/changeTodolistTitle', 
         } else {
             return handleAsyncServerAppError(res.data, thunkAPI)
         }
-    } catch (error) {
-        return handleAsyncServerNetworkError(error, thunkAPI, false)
+    } catch (error: any) {
+        const err: AxiosError = error
+        return handleAsyncServerNetworkError(err, thunkAPI, false)
     }
 })
 

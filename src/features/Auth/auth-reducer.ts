@@ -3,6 +3,7 @@ import {handleAsyncServerAppError, handleAsyncServerNetworkError} from '../../ut
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit'
 import {FieldErrorType, LoginParamsType} from '../../api/types'
 import {appActions} from '../CommonActions/App'
+import {AxiosError} from "axios";
 
 const {setAppStatus} = appActions
 
@@ -17,8 +18,9 @@ export const login = createAsyncThunk<undefined, LoginParamsType,
         } else {
             return handleAsyncServerAppError(res.data, thunkAPI)
         }
-    } catch (error) {
-        return handleAsyncServerNetworkError(error, thunkAPI)
+    } catch (error:any) {
+        const err:AxiosError = error
+        return handleAsyncServerNetworkError(err, thunkAPI)
     }
 })
 export const logout = createAsyncThunk('auth/logout', async (param, thunkAPI) => {
@@ -31,8 +33,9 @@ export const logout = createAsyncThunk('auth/logout', async (param, thunkAPI) =>
         } else {
             return handleAsyncServerAppError(res.data, thunkAPI)
         }
-    } catch (error) {
-        return handleAsyncServerNetworkError(error, thunkAPI)
+    } catch (error:any) {
+        const err:AxiosError = error
+        return handleAsyncServerNetworkError(err, thunkAPI)
     }
 })
 
